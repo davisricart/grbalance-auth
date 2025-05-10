@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty and Grace</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Downgrade to Firebase 8.x which doesn't use private fields -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <!-- Direct Firebase configuration -->
+    <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNdKlkXK2zLWKNbqL9HbnHgq3iHpg7AKs",
+      authDomain: "gr-balance.firebaseapp.com",
+      projectId: "gr-balance",
+      storageBucket: "gr-balance.firebasestorage.app",
+      messagingSenderId: "888884147701",
+      appId: "1:888884147701:web:ec008973a873635aba5cbc"
+    };
+    
+    // Initialize Firebase (using Firebase 8.x syntax)
+    firebase.initializeApp(firebaseConfig);
+    </script>
+    
+    <!-- Your existing styles here -->
+    <style>
+        /* All your existing styles */
+    </style>
+</head>
+<body>
+    <!-- All your existing HTML here -->
+    
+    <script>
+    // Get auth from Firebase 8.x
+    const auth = firebase.auth();
+    
+    // App variables
+    const REPO_OWNER = 'davisricart';
+    const REPO_NAME = 'grbalance-auth';
+    const SCRIPT_PATH = 'scripts';
+    
+    // Script options
+    const scriptOptions = [
+        {value:"run5", label:"Main HUB vs Sales", description:"Compares payment data between two files and highlights discrepancies in transaction amounts."},
+        {value:"N/A", label:"N/A", description:"N/A"}
+    ];
+    
+    // Initialize the app directly (no need for initializeFirebase)
+    function initApp() {
+        // Update login status
+        const loginStatus = document.getElementById('login-status');
+        if (loginStatus) {
+            loginStatus.textContent = 'Checking authentication status...';
+        }
+        
+        // Auth elements
+        const loginForm = document.getElementById('login-form');
+        const loginButton = document.getElementById('loginButton');
+        const logoutBtn = document.getElementById('logout-btn');
+        const authError = document.getElementById('auth-error');
+        const mainContent = document.getElementById('main-content');
+        
+        // Auth listeners
+        auth.onAuthStateChanged(user => {
+            if (loginStatus) {
+                loginStatus.classList.remove('loading-dots');
+            }
+            
+            if (user) {
+                loginStatus.textContent = `Logged in as: ${user.email}`;
+                loginForm.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                mainContent.style.display = 'block';
+            } else {
+                loginStatus.textContent = 'Please sign in to continue';
+                loginForm.style.display = 'block';
+                logoutBtn.style.display = 'none';
+                mainContent.style.display = 'none';
+            }
+        });
+        
+        // Set up event listeners
+        loginForm.addEventListener('submit', e => {
+            e.preventDefault();
+            signIn(loginForm.email.value, loginForm.password.value);
+        });
+        
+        logoutBtn.addEventListener('click', () => {
+            // Show loading indicator
+            loginStatus.textContent = 'Signing you out...';
+            loginStatus.classList.add('loading-dots');
+            
+            auth.signOut()
+                .then(() => {
+                    console.log('User signed out');
+                    showSuccessMessage('You have been signed out successfully');
+                    loginStatus.classList.remove('loading-dots');
+                })
+                .catch(error => {
+                    console.error('Error signing out:', error);
+                    showErrorMessage('Something went wrong while signing out. Please try again.');
+                    loginStatus.classList.remove('loading-dots');
+                });
+        });
+        
+        // Initialize the rest of your app
+        populateScriptDropdown();
+        setupDragDrop(document.getElementById('dropArea1'), document.getElementById('file1Input'));
+        setupDragDrop(document.getElementById('dropArea2'), document.getElementById('file2Input'));
+        document.getElementById('compareButton').addEventListener('click', compareFiles);
+        document.getElementById('clearButton').addEventListener('click', clearForm);
+    }
+    
+    // Simplified signIn function
+    function signIn(email, password) {
+        console.log(`Attempting to sign in with email: ${email}`);
+        
+        // Clear previous error messages
+        const authError = document.getElementById('auth-error');
+        authError.textContent = '';
+        authError.className = '';
+        
+        // Show loading indicator
+        const loginButton = document.getElementById('loginButton');
+        const loginStatus = document.getElementById('login-status');
+        loginButton.disabled = true;
+        loginStatus.textContent = 'Signing you in...';
+        loginStatus.classList.add('loading-dots');
+        
+        auth.signInWithEmailAndPassword(email, password)
+            .then(userCredential => {
+                console.log('User signed in successfully:', userCredential.user.email);
+                authError.textContent = '';
+                showSuccessMessage('Welcome back!');
+                
+                // Reset status
+                loginStatus.textContent = `Logged in as: ${userCredential.user.email}`;
+                loginStatus.classList.remove('loading-dots');
+                loginButton.disabled = false;
+            })
+            .catch(error => {
+                console.error('Sign-in error:', error.code, error.message);
+                
+                // Friendly error messages based on error code
+                switch(error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        showErrorMessage('The email or password you entered is incorrect. Please try again.');
+                        break;
+                    case 'auth/invalid-email':
+                        showErrorMessage('Please enter a valid email address.');
+                        break;
+                    case 'auth/user-disabled':
+                        showErrorMessage('This account has been disabled. Please contact support.');
+                        break;
+                    case 'auth/network-request-failed':
+                        showErrorMessage('Network connection issue. Please check your internet and try again.');
+                        break;
+                    case 'auth/too-many-requests':
+                        showErrorMessage('Too many attempts. Please wait a moment before trying again.');
+                        break;
+                    default:
+                        showErrorMessage('Unable to sign in. Please try again later.');
+                }
+                
+                // Reset status
+                loginStatus.textContent = 'Please sign in to continue';
+                loginStatus.classList.remove('loading-dots');
+                loginButton.disabled = false;
+            });
+    }
+    
+    // Helper functions
+    function showErrorMessage(message) {
+        const authError = document.getElementById('auth-error');
+        authError.textContent = message;
+        authError.className = 'error';
+        
+        // Clear message after 5 seconds
+        setTimeout(() => {
+            authError.style.transition = 'opacity 0.5s ease';
+            authError.style.opacity = '0';
+            setTimeout(() => {
+                authError.textContent = '';
+                authError.className = '';
+                authError.style.opacity = '1';
+            }, 500);
+        }, 5000);
+    }
+    
+    function showSuccessMessage(message) {
+        const authError = document.getElementById('auth-error');
+        authError.textContent = message;
+        authError.className = 'success';
+        
+        // Clear message after 3 seconds
+        setTimeout(() => {
+            authError.style.transition = 'opacity 0.5s ease';
+            authError.style.opacity = '0';
+            setTimeout(() => {
+                authError.textContent = '';
+                authError.className = '';
+                authError.style.opacity = '1';
+            }, 500);
+        }, 3000);
+    }
+    
+    // Your other functions (populateScriptDropdown, updateScriptDescription, setupDragDrop, etc.)
+    
+    // Initialize the app when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
