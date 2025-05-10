@@ -16,7 +16,14 @@
         .container{max-width:1200px;margin:0 auto}
         .form-section{max-width:600px;margin:0 auto}
         h1{color:var(--text);font-size:1.875rem;font-weight:700;margin-bottom:2rem;letter-spacing:-.025em;text-align:center}
+        h2{color:var(--text);font-size:1.5rem;font-weight:600;margin-bottom:1.5rem;text-align:center}
         h3{color:var(--text);font-size:1.25rem;font-weight:600;margin-bottom:1.25rem}
+        .subtitle {
+            text-align: center;
+            color: var(--light-text);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
         button{padding:.625rem 1.25rem;font-weight:500;border:none;border-radius:.375rem;cursor:pointer;font-size:.875rem;color:#fff;box-shadow:var(--shadow-sm);transition:var(--transition);display:inline-flex;align-items:center;justify-content:center;line-height:1.25rem}
         button:focus{outline:none;box-shadow:0 0 0 3px rgba(37,99,235,.4)}
         #compareButton{background-color:var(--primary)}
@@ -58,107 +65,166 @@
         #login-status{text-align:center;padding:.5rem;margin-bottom:1rem;font-weight:500}
         #auth-forms-container{display:flex;gap:1rem;flex-direction:column}
         @media(min-width:768px){#auth-forms-container{flex-direction:row}}
-        #signup-form,#login-form{flex:1}
-        #signup-form h2,#login-form h2{font-size:1.25rem;margin-bottom:1rem}
         #auth-container input{display:block;width:100%;padding:.625rem .75rem;margin-bottom:1rem;color:var(--text);background-color:var(--card-background);border:1px solid var(--border);border-radius:.375rem;transition:var(--transition);font-size:.875rem}
         #auth-container input:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(37,99,235,.2)}
         #auth-container button{width:100%}
-        #user-content{margin-top:1.5rem}
-        #auth-error{color:var(--danger);margin-top:.5rem;font-size:.875rem}
+        #login-form h2{font-size:1.5rem;margin-bottom:1.5rem;font-weight:600}
+        #auth-error{color:var(--danger);margin-top:.5rem;font-size:.875rem;text-align:center}
         #main-content{display:none}
+        
+        /* New login form styles */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .footer {
+            text-align: center;
+            color: var(--light-text);
+            font-size: 0.875rem;
+            margin-top: 2rem;
+        }
+        
+        /* Additional Auth Styles for better error display */
+        #auth-error.success {
+            color: var(--success);
+            background-color: var(--success-light);
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+        }
+        
+        #auth-error.error {
+            color: var(--danger);
+            background-color: var(--danger-light);
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+        }
+        
+        /* Loading animation */
+        .loading-dots:after {
+            content: '.';
+            animation: loading 1.5s infinite;
+            display: inline-block;
+            width: 20px;
+            text-align: left;
+        }
+        
+        @keyframes loading {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
     </style>
 </head>
 <body>
-    <div id="auth-container" class="card">
-        <div id="login-status">Checking authentication status...</div>
-        <div id="auth-error"></div>
+    <div class="container">
+        <h1>Beauty and Grace</h1>
+        <p class="subtitle">Payment Reconciliation Service</p>
         
-        <div id="auth-forms-container">
-            <form id="signup-form">
-                <h2>Sign Up</h2>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit" class="custom-file-button">Sign Up</button>
-            </form>
+        <div id="auth-container" class="card">
+            <div id="login-status">Checking authentication status...</div>
+            <div id="auth-error"></div>
             
             <form id="login-form">
-                <h2>Log In</h2>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit" class="custom-file-button">Log In</button>
-            </form>
-        </div>
-        
-        <button id="logout-btn" style="display:none;margin-top:1rem" class="custom-file-button">Log Out</button>
-    </div>
-    
-    <div id="main-content" class="container">
-        <h1>Beauty and Grace</h1>
-        
-        <form id="uploadForm">
-            <div class="form-section">
-                <div class="card">
-                    <div class="form-group">
-                        <label class="form-label" for="file1Input">Upload First File</label>
-                        <div class="custom-file-input">
-                            <button type="button" class="custom-file-button" onclick="document.getElementById('file1Input').click()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Select File</button>
-                            <span class="custom-file-name" id="file1Name">No file selected</span>
-                            <input type="file" id="file1Input" class="real-file-input" accept=".xlsx" onchange="updateFileName(this, 'file1Name')">
-                        </div>
-                        <div class="drop-area" id="dropArea1"><p>Drag & drop your first Excel file here</p></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="file2Input">Upload Second File</label>
-                        <div class="custom-file-input">
-                            <button type="button" class="custom-file-button" onclick="document.getElementById('file2Input').click()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Select File</button>
-                            <span class="custom-file-name" id="file2Name">No file selected</span>
-                            <input type="file" id="file2Input" class="real-file-input" accept=".xlsx" onchange="updateFileName(this, 'file2Name')">
-                        </div>
-                        <div class="drop-area" id="dropArea2"><p>Drag & drop your second Excel file here</p></div>
-                    </div>
+                <h2>Sign In</h2>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" name="email" class="form-control" required>
                 </div>
                 
-                <div class="card">
-                    <div class="form-group">
-                        <label class="form-label" for="scriptSelect">Select Script</label>
-                        <div id="loadingScripts">Loading available scripts...</div>
-                        <div id="scriptSelectContainer" style="display:none">
-                            <select id="scriptSelect" class="form-control" required>
-                                <option value="">Select a script...</option>
-                                <!-- Options populated dynamically -->
-                            </select>
-                            <div id="scriptDescription" style="display:none"></div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn" id="loginButton">Sign In</button>
+            </form>
+            
+            <button id="logout-btn" style="display:none;margin-top:1rem" class="btn">Log Out</button>
+        </div>
+        
+        <div id="main-content" class="container">
+            <form id="uploadForm">
+                <div class="form-section">
+                    <div class="card">
+                        <div class="form-group">
+                            <label class="form-label" for="file1Input">Upload First File</label>
+                            <div class="custom-file-input">
+                                <button type="button" class="custom-file-button" onclick="document.getElementById('file1Input').click()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Select File</button>
+                                <span class="custom-file-name" id="file1Name">No file selected</span>
+                                <input type="file" id="file1Input" class="real-file-input" accept=".xlsx" onchange="updateFileName(this, 'file1Name')">
+                            </div>
+                            <div class="drop-area" id="dropArea1"><p>Drag & drop your first Excel file here</p></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="file2Input">Upload Second File</label>
+                            <div class="custom-file-input">
+                                <button type="button" class="custom-file-button" onclick="document.getElementById('file2Input').click()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Select File</button>
+                                <span class="custom-file-name" id="file2Name">No file selected</span>
+                                <input type="file" id="file2Input" class="real-file-input" accept=".xlsx" onchange="updateFileName(this, 'file2Name')">
+                            </div>
+                            <div class="drop-area" id="dropArea2"><p>Drag & drop your second Excel file here</p></div>
                         </div>
                     </div>
                     
-                    <div class="btn-group">
-                        <button type="button" id="compareButton">Run Comparison</button>
-                        <button type="button" id="clearButton">Clear Form</button>
-                        <button type="button" id="downloadButton" style="display:none">Download Results</button>
+                    <div class="card">
+                        <div class="form-group">
+                            <label class="form-label" for="scriptSelect">Select Script</label>
+                            <div id="loadingScripts">Loading available scripts...</div>
+                            <div id="scriptSelectContainer" style="display:none">
+                                <select id="scriptSelect" class="form-control" required>
+                                    <option value="">Select a script...</option>
+                                    <!-- Options populated dynamically -->
+                                </select>
+                                <div id="scriptDescription" style="display:none"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="button" id="compareButton">Run Comparison</button>
+                            <button type="button" id="clearButton">Clear Form</button>
+                            <button type="button" id="downloadButton" style="display:none">Download Results</button>
+                        </div>
+                        <p id="status"></p>
                     </div>
-                    <p id="status"></p>
+                </div>
+            </form>
+            
+            <div id="previewArea" class="fade-in" style="display:none">
+                <div class="card">
+                    <h3>Comparison Results</h3>
+                    <div class="table-container">
+                        <table id="previewTable"></table>
+                    </div>
+                    <div style="margin-top:1rem;display:flex;gap:1rem;font-size:.875rem">
+                        <div style="display:flex;align-items:center;gap:.5rem">
+                            <span style="display:inline-block;width:1rem;height:1rem;background-color:var(--danger-light);border:1px solid var(--danger)"></span>
+                            <span>Negative difference</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:.5rem">
+                            <span style="display:inline-block;width:1rem;height:1rem;background-color:var(--success-light);border:1px solid var(--success)"></span>
+                            <span>Positive/Zero difference</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
+        </div>
         
-        <div id="previewArea" class="fade-in" style="display:none">
-            <div class="card">
-                <h3>Comparison Results</h3>
-                <div class="table-container">
-                    <table id="previewTable"></table>
-                </div>
-                <div style="margin-top:1rem;display:flex;gap:1rem;font-size:.875rem">
-                    <div style="display:flex;align-items:center;gap:.5rem">
-                        <span style="display:inline-block;width:1rem;height:1rem;background-color:var(--danger-light);border:1px solid var(--danger)"></span>
-                        <span>Negative difference</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:.5rem">
-                        <span style="display:inline-block;width:1rem;height:1rem;background-color:var(--success-light);border:1px solid var(--success)"></span>
-                        <span>Positive/Zero difference</span>
-                    </div>
-                </div>
-            </div>
+        <div class="footer">
+            &copy; 2025 Beauty and Grace &middot; Terms of Service &middot; Privacy Policy
         </div>
     </div>
 
@@ -180,56 +246,118 @@
     
     // Auth elements
     const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
+    const loginButton = document.getElementById('loginButton');
     const logoutBtn = document.getElementById('logout-btn');
     const loginStatus = document.getElementById('login-status');
     const authError = document.getElementById('auth-error');
-    const authFormsContainer = document.getElementById('auth-forms-container');
     const mainContent = document.getElementById('main-content');
     
-    // Auth functions
-    function signUp(email, password) {
-        auth.createUserWithEmailAndPassword(email, password)
+    // Enhanced sign-in function with friendly error messages
+    function signIn(email, password) {
+        console.log(`Attempting to sign in with email: ${email}`);
+        
+        // Clear previous error messages
+        authError.textContent = '';
+        authError.className = '';
+        
+        // Show loading indicator
+        loginButton.disabled = true;
+        loginStatus.textContent = 'Signing you in...';
+        loginStatus.classList.add('loading-dots');
+        
+        auth.signInWithEmailAndPassword(email, password)
             .then(userCredential => {
-                console.log('User signed up:', userCredential.user);
+                console.log('User signed in successfully:', userCredential.user.email);
                 authError.textContent = '';
+                showSuccessMessage('Welcome back!');
+                
+                // Reset status
+                loginStatus.textContent = `Logged in as: ${userCredential.user.email}`;
+                loginStatus.classList.remove('loading-dots');
+                loginButton.disabled = false;
             })
             .catch(error => {
-                console.error('Error signing up:', error.code, error.message);
-                authError.textContent = error.message;
+                console.error('Sign-in error:', error.code, error.message);
+                
+                // Friendly error messages based on error code
+                switch(error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        showErrorMessage('The email or password you entered is incorrect. Please try again.');
+                        break;
+                    case 'auth/invalid-email':
+                        showErrorMessage('Please enter a valid email address.');
+                        break;
+                    case 'auth/user-disabled':
+                        showErrorMessage('This account has been disabled. Please contact support.');
+                        break;
+                    case 'auth/network-request-failed':
+                        showErrorMessage('Network connection issue. Please check your internet and try again.');
+                        break;
+                    case 'auth/too-many-requests':
+                        showErrorMessage('Too many attempts. Please wait a moment before trying again.');
+                        break;
+                    default:
+                        showErrorMessage('Unable to sign in. Please try again later.');
+                }
+                
+                // Reset status
+                loginStatus.textContent = 'Please sign in to continue';
+                loginStatus.classList.remove('loading-dots');
+                loginButton.disabled = false;
             });
     }
     
-    function signIn(email, password) {
-        auth.signInWithEmailAndPassword(email, password)
-            .then(userCredential => {
-                console.log('User signed in:', userCredential.user);
+    // Helper function to show error messages with better styling
+    function showErrorMessage(message) {
+        authError.textContent = message;
+        authError.className = 'error';
+        
+        // Clear message after 5 seconds
+        setTimeout(() => {
+            authError.style.transition = 'opacity 0.5s ease';
+            authError.style.opacity = '0';
+            setTimeout(() => {
                 authError.textContent = '';
-            })
-            .catch(error => {
-                console.error('Error signing in:', error.code, error.message);
-                authError.textContent = error.message;
-            });
+                authError.className = '';
+                authError.style.opacity = '1';
+            }, 500);
+        }, 5000);
+    }
+    
+    // Helper function to show success messages
+    function showSuccessMessage(message) {
+        authError.textContent = message;
+        authError.className = 'success';
+        
+        // Clear message after 3 seconds
+        setTimeout(() => {
+            authError.style.transition = 'opacity 0.5s ease';
+            authError.style.opacity = '0';
+            setTimeout(() => {
+                authError.textContent = '';
+                authError.className = '';
+                authError.style.opacity = '1';
+            }, 500);
+        }, 3000);
     }
     
     // Auth listeners
     auth.onAuthStateChanged(user => {
+        loginStatus.classList.remove('loading-dots');
+        
         if (user) {
             loginStatus.textContent = `Logged in as: ${user.email}`;
-            authFormsContainer.style.display = 'none';
+            loginForm.style.display = 'none';
             logoutBtn.style.display = 'block';
             mainContent.style.display = 'block';
         } else {
             loginStatus.textContent = 'Please sign in to continue';
-            authFormsContainer.style.display = 'flex';
+            loginForm.style.display = 'block';
             logoutBtn.style.display = 'none';
             mainContent.style.display = 'none';
         }
-    });
-    
-    signupForm.addEventListener('submit', e => {
-        e.preventDefault();
-        signUp(signupForm.email.value, signupForm.password.value);
     });
     
     loginForm.addEventListener('submit', e => {
@@ -238,11 +366,20 @@
     });
     
     logoutBtn.addEventListener('click', () => {
+        // Show loading indicator
+        loginStatus.textContent = 'Signing you out...';
+        loginStatus.classList.add('loading-dots');
+        
         auth.signOut()
-            .then(() => console.log('User signed out'))
+            .then(() => {
+                console.log('User signed out');
+                showSuccessMessage('You have been signed out successfully');
+                loginStatus.classList.remove('loading-dots');
+            })
             .catch(error => {
                 console.error('Error signing out:', error);
-                authError.textContent = error.message;
+                showErrorMessage('Something went wrong while signing out. Please try again.');
+                loginStatus.classList.remove('loading-dots');
             });
     });
     
@@ -317,15 +454,19 @@
     }
     
     async function fetchComparisonScript(scriptName) {
-        const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${SCRIPT_PATH}/${scriptName}.js`;
+        const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${SCRIPT_PATH}/${scriptName}.js`;
+        
         try {
             const response = await fetch(url);
             if (!response.ok) {
-                throw new Error('Code not found, please try again. If the error continues please contact us');
+                throw new Error(`Script not found. Status: ${response.status}. Please check if the script exists in the repository.`);
             }
-            return atob((await response.json()).content);
+            
+            // Get the script content directly (no need for base64 decoding)
+            return await response.text();
         } catch (error) {
-            throw error;
+            console.error('Error fetching script:', error);
+            throw new Error('Failed to fetch the script. Please check your internet connection and try again.');
         }
     }
 
